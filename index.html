@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Info Portal</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b0b0b;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #1c1c1c;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .menu-icon {
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .menu {
+      position: fixed;
+      top: 60px;
+      left: 10px;
+      background: #222;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #000;
+      display: none;
+      flex-direction: column;
+      padding: 10px;
+      width: 180px;
+      z-index: 101;
+    }
+
+    .menu button {
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px;
+      margin: 5px 0;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .menu button:hover {
+      background: #555;
+    }
+
+    main {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .result {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .card {
+      background: #1e1e1e;
+      border-radius: 10px;
+      padding: 15px;
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 0 15px #333;
+      transition: 0.3s;
+      margin: auto;
+    }
+
+    .card img {
+      display: block;
+      margin: 15px auto;
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    .bottom-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .bottom-buttons button {
+      background: #282828;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .bottom-buttons button:hover {
+      background: #444;
+    }
+
+    .class-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .class-buttons button {
+      background: #282828;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .class-buttons button:hover {
+      background: #444;
+    }
+
+    input {
+      width: 80%;
+      max-width: 400px;
+      padding: 10px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      margin-bottom: 20px;
+    }
+
+    mark {
+      background: yellow;
+      color: black;
+      border-radius: 3px;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="menu-icon" id="menuIcon">☰</div>
+    <h2>Smart Info Portal</h2>
+  </header>
+
+  <div class="menu" id="menu">
+    <button>Upcoming</button>
+    <button id="classInfoBtn">Class Information</button>
+    <button>Upcoming</button>
+    <button>মিড রুটিন</button>
+  </div>
+
+  <main id="mainContent">
+    <h1>🔍 Smart Info Search</h1>
+    <input type="text" id="search" placeholder="Type something...">
+    <div class="result" id="result"></div>
+
+    <div class="bottom-buttons">
+      <button id="routineBtn">রুটিন</button>
+    </div>
+  </main>
+
+  <script>
+    const menuIcon = document.getElementById("menuIcon");
+    const menu = document.getElementById("menu");
+    const mainContent = document.getElementById("mainContent");
+
+    // Toggle menu
+    menuIcon.addEventListener("click", () => {
+      menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
+    });
+
+    // Menu auto hide
+    const menuButtons = document.querySelectorAll('.menu button');
+    menuButtons.forEach(btn => {
+      btn.addEventListener('click', () => { menu.style.display = 'none'; });
+    });
+
+    function highlightText(text, query) {
+      const pattern = new RegExp(`(${query})`, "gi");
+      return text.replace(pattern, "<mark>$1</mark>");
+    }
+
+    const dataMain = [
+      { name: "Python", info: "Python is a high-level programming language used in AI, ML, and web development." },
+      { name: "JavaScript", info: "JavaScript is used for interactive web pages and web apps." },
+      { name: "AI", info: "AI stands for Artificial Intelligence — machines that can think and learn like humans." },
+      { name: "Cybersecurity", info: "Cybersecurity protects computers and networks from attacks." },
+      { name: "Machine Learning", info: "Machine Learning allows computers to learn from data without being explicitly programmed." }
+    ];
+
+    const dataPython = [{ name: "Python", info: "মিড পরীক্ষার সিলেবাস ১-৬ অধ্যায় সম্ভবত" }];
+    const dataBangla2 = [{ name: "Bangla2", info: "মিডের সিলেবাস ব্যাকারণ বা অধ্যায় ১-৪ এবং ভাবসম্প্রসারণ এবং জীবনবৃত্তান্ত" }];
+    const dataMath2 = [{ name: "Mathematics ২", info: "মিড পরীক্ষা: ১–৮" }];
+    const dataEnglish2 = [];
+    const dataChemistry = [{ name: "Chemistry", info: "মিড সিলোবাস ১-৬ অধ্যায়" }];
+    const dataElectronics = [{name: "Basic Electronics", info:"মিডের সিলেবাস ১-৫ অধ্যায়"}];
+    const dataUpcoming1 = [];
+    const dataUpcoming2 = [];
+    const dataUpcoming3 = [];
+
+    // Load search page
+    function loadSearchPage(dataList, title="🔍 Smart Info Search") {
+      mainContent.innerHTML = `
+        <h1>${title}</h1>
+        <input type="text" id="search" placeholder="Type something...">
+        <div class="result" id="result"></div>
+        <div class="bottom-buttons">
+          <button id="routineBtn">রুটিন</button>
+        </div>
+      `;
+
+      const input = document.getElementById("search");
+      const result = document.getElementById("result");
+
+      input.addEventListener("input", () => {
+        const query = input.value.toLowerCase().trim();
+        result.innerHTML = "";
+
+        if (!query) return;
+
+        let matches;
+        if (query === "all") {
+          matches = dataList;
+        } else {
+          matches = dataList.filter(item =>
+            item.name.toLowerCase().includes(query) ||
+            item.info.toLowerCase().includes(query)
+          );
+        }
+
+        if (matches.length === 0) {
+          result.innerHTML = "<p>এখনো এই সম্পর্কে কোন তথ্য যোগ করা হয়নি</p>";
+          return;
+        }
+
+        matches.forEach(item => {
+          const nameHighlighted = query !== "all" ? highlightText(item.name, query) : item.name;
+          const div = document.createElement("div");
+          div.className = "card";
+          div.innerHTML = `<h3>${nameHighlighted}</h3>${item.info}`;
+          result.appendChild(div);
+        });
+      });
+
+      // Routine button click
+      document.getElementById("routineBtn").addEventListener("click", showRoutineImage);
+    }
+
+    function showRoutineImage() {
+      mainContent.innerHTML = `
+        <h1>🗓️ মিড রুটিন</h1>
+        <div class="result" id="result"></div>
+      `;
+      const result = document.getElementById("result");
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `<img src='received_1202968865079506.jpeg' alt='Mid Routine' />`;
+      result.appendChild(div);
+    }
+
+    loadSearchPage(dataMain);
+
+    // Class Information Page
+    document.getElementById("classInfoBtn").addEventListener("click", () => {
+      mainContent.innerHTML = `
+        <h1>📚 Class Information</h1>
+        <div class="class-buttons">
+          <button id="btnPython">Python</button>
+          <button id="btnBangla">বাংলা ২</button>
+          <button id="btnMath">Mathematics ২</button>
+          <button id="btnEnglish">English ২</button>
+          <button id="btnChem">Chemistry</button>
+          <button id="btnElectronics">Basic Electronics</button>
+          <button id="btnUp1">Upcoming</button>
+          <button id="btnUp2">Upcoming</button>
+          <button id="btnUp3">Upcoming</button>
+        </div>
+      `;
+
+      document.getElementById("btnPython").addEventListener("click", () => loadSearchPage(dataPython, "🐍 Python Information"));
+      document.getElementById("btnBangla").addEventListener("click", () => loadSearchPage(dataBangla2, "📝 বাংলা ২"));
+      document.getElementById("btnMath").addEventListener("click", () => loadSearchPage(dataMath2, "📘 Mathematics ২"));
+      document.getElementById("btnEnglish").addEventListener("click", () => loadSearchPage(dataEnglish2, "📖 English ২"));
+      document.getElementById("btnChem").addEventListener("click", () => loadSearchPage(dataChemistry, "⚗️ Chemistry"));
+      document.getElementById("btnElectronics").addEventListener("click", () => loadSearchPage(dataElectronics, "🔌 Basic Electronics"));
+      document.getElementById("btnUp1").addEventListener("click", () => loadSearchPage(dataUpcoming1, "🕒 Upcoming"));
+      document.getElementById("btnUp2").addEventListener("click", () => loadSearchPage(dataUpcoming2, "🕒 Upcoming"));
+      document.getElementById("btnUp3").addEventListener("click", () => loadSearchPage(dataUpcoming3, "🕒 Upcoming"));
+    });
+  </script>
+</body>
+</html>
